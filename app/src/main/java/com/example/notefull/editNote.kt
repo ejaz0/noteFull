@@ -27,53 +27,49 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 
-
-data class Note(
-    val id: String = UUID.randomUUID().toString(),
-    var title: String,
-    var body: String
-)
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun newNote(list : MutableList<Note>, navController: NavController){
+fun EditNote(noteId: String, list: MutableList<Note>, navController: NavController) {
 
-    var textTitle by rememberSaveable { mutableStateOf("") }
-    var textBody by rememberSaveable { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(text = "Enter Note")
-        TextField(value = textTitle, onValueChange = { newTextTitle ->
-            textTitle = newTextTitle
-        })
-        TextField(value = textBody, onValueChange = { newTextBody ->
-            textBody = newTextBody
-        })
-        Row {
-            Button(onClick = {
-                if(textTitle.length < 50 && textTitle.length > 3 && textBody.length < 120) {
-                    list.add(Note(title = textTitle, body = textBody,))
-                    textTitle = ""
-                    textBody = ""
+    val note = list.firstOrNull { it.id == noteId}
+
+    if (note != null) {
+        var textTitle by remember { mutableStateOf(note.title) }
+        var textBody by remember { mutableStateOf(note.body) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            TextField(value = textTitle, onValueChange = { newTextTitle ->
+                textTitle = newTextTitle
+                note.title = newTextTitle
+            })
+
+            TextField(value = textBody, onValueChange = { newTextBody ->
+                textBody = newTextBody
+                note.body = newTextBody
+            })
+
+            Row {
+                Button(onClick = {
+                    val noteIndex = list.indexOfFirst { it.id == noteId }
+                    list[noteIndex] = note
+
+                    navController.navigateUp()
+                }) {
+                    Text(text = "Save")
                 }
-            }) {
-                Text(text = "Create")
-            }
 
-            Button(onClick = {
-                navController.navigateUp()
-            }) {
-                Text(text = "Home")
+                Button(onClick = {
+                    navController.navigateUp()
+                }) {
+                    Text(text = "Cancel")
+                }
             }
         }
+    } else {
+        navController.navigateUp()
     }
 }
-
-
-
-

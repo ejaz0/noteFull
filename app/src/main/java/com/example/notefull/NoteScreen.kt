@@ -1,6 +1,8 @@
 package com.example.notefull
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +23,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -38,20 +42,27 @@ fun noteList(noteList: MutableList<Note>, navController: NavController) {
                 modifier = Modifier.padding(16.dp),
                 style = TextStyle(
                     fontSize = 30.sp,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Bold,
                 )
             )
-        }
-        item {
             Button(onClick = {
-                // Use navigation to navigate to the "newNote" screen
                 navController.navigate("newNote")
-            }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Icon")
+            }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = "Add Icon"
+                )
             }
         }
+
         items(noteList) { note ->
-            Column {
+            val isSelected = remember { mutableStateOf(false) }
+            Column(
+                modifier = Modifier.clickable {
+                        isSelected.value = true
+                    }
+                    .padding(10.dp)
+            ) {
                 Divider()
                 Text(
                     text = note.title,
@@ -70,16 +81,20 @@ fun noteList(noteList: MutableList<Note>, navController: NavController) {
                     }) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
                     }
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = {
+                        navController.navigate("editNote/${note.id}")
+                    }) {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Icon")
                     }
+                }
+                if(isSelected.value){
+                    navController.navigate("noteClick/${note.id}")
                 }
                 Divider()
             }
         }
     }
 }
-
 
 
 @Composable
@@ -94,5 +109,16 @@ fun PreviewNoteApp() {
         composable("newNote"){
             newNote(noteList, navController)
         }
+        composable("noteClick/{noteId}"){ backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val noteId = arguments.getString("noteId") ?: ""
+            noteClick(noteId, noteList, navController)
+        }
+        composable("EditNote/{noteId}") { backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val noteId = arguments.getString("noteId") ?: ""
+            EditNote(noteId, noteList, navController)
+        }
     }
 }
+
