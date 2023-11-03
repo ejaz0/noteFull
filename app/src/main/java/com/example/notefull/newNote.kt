@@ -26,6 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 
 
 data class Note(
@@ -42,6 +46,7 @@ fun newNote(list : MutableList<Note>, navController: NavController){
 
     var textTitle by rememberSaveable { mutableStateOf("") }
     var textBody by rememberSaveable { mutableStateOf("") }
+    var errorMsg by remember { mutableStateOf<String?>(null) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +66,9 @@ fun newNote(list : MutableList<Note>, navController: NavController){
                     textTitle = ""
                     textBody = ""
                 }
+                else{
+                    errorMsg = "Title needs to be between 50 and 3 characters, description less than 120"
+                }
             }) {
                 Text(text = "Create")
             }
@@ -70,6 +78,22 @@ fun newNote(list : MutableList<Note>, navController: NavController){
             }) {
                 Text(text = "Home")
             }
+
+        }
+        if(errorMsg!=null){
+            Text(
+                text = "Title needs to be between 50 and 3 characters, description less than 120",
+                style = TextStyle(
+                        color = Color.Red,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                )
+            )
+            Button(onClick = {
+                errorMsg = null
+            }) {
+                Text(text = "Dismiss")
+            } 
         }
     }
 }
