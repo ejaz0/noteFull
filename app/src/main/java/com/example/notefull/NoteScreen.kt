@@ -88,6 +88,7 @@ fun noteList(noteList: MutableList<Note>, navController: NavController) {
                     }
                 }
                 if(isSelected.value){
+                    isSelected.value = false
                     navController.navigate("noteClick/${note.id}")
                 }
                 Divider()
@@ -104,7 +105,7 @@ fun PreviewNoteApp() {
 
     NavHost(navController, startDestination = "noteList" ){
         composable("noteList"){
-            noteList(noteList = noteList, navController)
+            noteList(noteList, navController)
         }
         composable("newNote"){
             newNote(noteList, navController)
