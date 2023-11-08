@@ -19,9 +19,8 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun noteClick(noteId: String, list: MutableList<Note>, navController: NavController) {
-    val note = list.firstOrNull { it.id == noteId }
+    val note = list.first { it.id == noteId }
 
-    if (note != null) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -48,5 +47,4 @@ fun noteClick(noteId: String, list: MutableList<Note>, navController: NavControl
                 }
             }
         }
-    }
 }

@@ -56,10 +56,9 @@ fun noteList(noteList: MutableList<Note>, navController: NavController) {
         }
 
         items(noteList) { note ->
-            val isSelected = remember { mutableStateOf(false) }
             Column(
                 modifier = Modifier.clickable {
-                        isSelected.value = true
+                         navController.navigate("noteClick/${note.id}")
                     }
                     .padding(10.dp)
             ) {
@@ -82,15 +81,12 @@ fun noteList(noteList: MutableList<Note>, navController: NavController) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
                     }
                     Button(onClick = {
-                        navController.navigate("editNote/${note.id}")
+                        navController.navigate("editNote/${note}.id")
                     }) {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Icon")
                     }
                 }
-                if(isSelected.value){
-                    isSelected.value = false
-                    navController.navigate("noteClick/${note.id}")
-                }
+
                 Divider()
             }
         }
